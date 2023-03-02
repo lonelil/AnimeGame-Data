@@ -1,9 +1,26 @@
 import genshindb from "genshin-db";
 import { outputFileSync } from "fs-extra";
 
-createCharacters(genshindb.Language.English);
-createCharacters(genshindb.Language.ChineseSimplified);
-createCharacters(genshindb.Language.ChineseTraditional);
+[
+  genshindb.Language.ChineseSimplified,
+  genshindb.Language.ChineseTraditional,
+  genshindb.Language.English,
+  genshindb.Language.French,
+  genshindb.Language.German,
+  genshindb.Language.Indonesian,
+  genshindb.Language.Italian,
+  genshindb.Language.Japanese,
+  genshindb.Language.Korean,
+  genshindb.Language.Portuguese,
+  genshindb.Language.Russian,
+  genshindb.Language.Spanish,
+  genshindb.Language.Thai,
+  genshindb.Language.Turkish,
+  genshindb.Language.Vietnamese,
+].forEach((lang) => {
+  console.log(`Starting for ${lang}.`);
+  createCharacters(lang);
+});
 
 function pathGenerator(lang: genshindb.Language, name: string) {
   return `./out/${lang.toLowerCase()}/${name}.json`;
