@@ -49,7 +49,7 @@ jobs:
 
       - name: Generate File Generated List
         run: |
-          echo $(chmod -c -R +rX "$INPUT_PATH" | while read line; do) > $RUNNER_TEMP/file_generated.txt
+          echo `tree ./out` > $RUNNER_TEMP/file_generated.txt
 
       - name: Upload File Generated List
         uses: actions/upload-artifact@main
