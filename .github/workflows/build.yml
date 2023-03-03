@@ -47,6 +47,15 @@ jobs:
       - name: Generate
         run: node dist/index.js
 
+      - name: Generate File Generated List
+        run: |
+          echo $(chmod -c -R +rX "$INPUT_PATH" | while read line; do) > $RUNNER_TEMP/file_generated.txt
+
+      - name: Upload File Generated List
+        uses: actions/upload-artifact@main
+        with:
+          path: ${{ runner.temp }}/file_generated.txt
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v1
         with:
