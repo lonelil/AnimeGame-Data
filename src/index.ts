@@ -1,4 +1,4 @@
-import genshindb from "genshin-db";
+import genshindb, { artifacts, Language } from "genshin-db";
 import { outputFileSync } from "fs-extra";
 
 [
@@ -17,9 +17,11 @@ import { outputFileSync } from "fs-extra";
   genshindb.Language.Thai,
   genshindb.Language.Turkish,
   genshindb.Language.Vietnamese,
+  genshindb.Language.English,
 ].forEach((lang) => {
   console.log(`Starting for ${lang}.`);
   createCharacters(lang);
+  createArtifacts(lang);
 });
 
 function pathGenerator(lang: genshindb.Language, name: string) {
@@ -27,7 +29,6 @@ function pathGenerator(lang: genshindb.Language, name: string) {
 }
 
 function createCharacters(lang: genshindb.Language) {
-  //Generate Character Name List
   let characters = genshindb.characters("names", {
     matchCategories: true,
     resultLanguage: lang,
@@ -63,5 +64,44 @@ function createCharacters(lang: genshindb.Language) {
       JSON.stringify(character)
     );
     console.log(`Generated ${characterName} ${lang}'s data.`);
+  });
+}
+
+function createArtifacts(lang: Language) {
+  let artifacts = genshindb.artifacts("names", {
+    matchCategories: true,
+    resultLanguage: lang,
+    queryLanguages: [lang],
+  });
+  console.log(`Generated ${lang}'s Artifact List.`);
+  outputFileSync(
+    pathGenerator(lang, "artifacts/all_names"),
+    JSON.stringify(artifacts)
+  );
+  console.log(`Generated ${lang}'s Artifact List with data.`);
+  outputFileSync(
+    pathGenerator(lang, "artifacts/all"),
+    JSON.stringify(
+      genshindb.artifacts("names", {
+        matchCategories: true,
+        verboseCategories: true,
+        resultLanguage: lang,
+        queryLanguages: [lang],
+      })
+    )
+  );
+  artifacts.forEach((artifactName) => {
+    let artifact = genshindb.artifacts(artifactName, {
+      queryLanguages: [lang],
+      resultLanguage: lang,
+    });
+    outputFileSync(
+      pathGenerator(
+        lang,
+        `artifacts/${artifactName.toLowerCase().replaceAll(" ", "")}`
+      ),
+      JSON.stringify(artifact)
+    );
+    console.log(`Generated ${artifactName} ${lang}'s data.`);
   });
 }
