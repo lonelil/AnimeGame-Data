@@ -1,4 +1,4 @@
-import genshindb, { artifacts, Language } from "genshin-db";
+import genshindb, { Language } from "genshin-db";
 import { outputFileSync } from "fs-extra";
 
 [
@@ -22,6 +22,7 @@ import { outputFileSync } from "fs-extra";
   console.log(`Starting for ${lang}.`);
   createCharacters(lang);
   createArtifacts(lang);
+  createFood(lang);
 });
 
 function pathGenerator(lang: genshindb.Language, name: string) {
@@ -34,12 +35,12 @@ function createCharacters(lang: genshindb.Language) {
     resultLanguage: lang,
     queryLanguages: [lang],
   });
-  console.log(`Generated ${lang}'s Character List.`);
+  console.log(`Characters: Generated ${lang}'s List.`);
   outputFileSync(
     pathGenerator(lang, "characters/all_names"),
     JSON.stringify(characters)
   );
-  console.log(`Generated ${lang}'s Character List with data.`);
+  console.log(`Characters: Generated ${lang}'s List with data.`);
   outputFileSync(
     pathGenerator(lang, "characters/all"),
     JSON.stringify(
@@ -63,7 +64,7 @@ function createCharacters(lang: genshindb.Language) {
       ),
       JSON.stringify(character)
     );
-    console.log(`Generated ${characterName} ${lang}'s data.`);
+    console.log(`Characters: Generated ${characterName} ${lang}'s data.`);
   });
 }
 
@@ -73,12 +74,12 @@ function createArtifacts(lang: Language) {
     resultLanguage: lang,
     queryLanguages: [lang],
   });
-  console.log(`Generated ${lang}'s Artifact List.`);
+  console.log(`Artifacts: Generated ${lang}'s List.`);
   outputFileSync(
     pathGenerator(lang, "artifacts/all_names"),
     JSON.stringify(artifacts)
   );
-  console.log(`Generated ${lang}'s Artifact List with data.`);
+  console.log(`Artifacts: Generated ${lang}'s List with data.`);
   outputFileSync(
     pathGenerator(lang, "artifacts/all"),
     JSON.stringify(
@@ -102,6 +103,42 @@ function createArtifacts(lang: Language) {
       ),
       JSON.stringify(artifact)
     );
-    console.log(`Generated ${artifactName} ${lang}'s data.`);
+    console.log(`Artifacts: Generated ${artifactName} ${lang}'s data.`);
+  });
+}
+
+function createFood(lang: Language) {
+  let foods = genshindb.foods("names", {
+    matchCategories: true,
+    resultLanguage: lang,
+    queryLanguages: [lang],
+  });
+  console.log(`Foods: Generated ${lang}'s List.`);
+  outputFileSync(pathGenerator(lang, "foods/all_names"), JSON.stringify(foods));
+  console.log(`Foods: Generated ${lang}'s List with data.`);
+  outputFileSync(
+    pathGenerator(lang, "foods/all"),
+    JSON.stringify(
+      genshindb.foods("names", {
+        matchCategories: true,
+        verboseCategories: true,
+        resultLanguage: lang,
+        queryLanguages: [lang],
+      })
+    )
+  );
+  foods.forEach((foodName) => {
+    let food = genshindb.foods(foodName, {
+      queryLanguages: [lang],
+      resultLanguage: lang,
+    });
+    outputFileSync(
+      pathGenerator(
+        lang,
+        `foods/${foodName.toLowerCase().replaceAll(" ", "")}`
+      ),
+      JSON.stringify(food)
+    );
+    console.log(`Foods: Generated ${foodName} ${lang}'s data.`);
   });
 }
